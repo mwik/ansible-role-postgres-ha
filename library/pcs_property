@@ -37,7 +37,7 @@ def main():
     value = out.strip()
 
     if module.params['state'] == 'absent':
-        print "absent?=?"
+        print("absent?=?")
         if value != '':
             changed = True
             if not module.check_mode:
@@ -47,7 +47,7 @@ def main():
             changed = False
         module.exit_json(changed=changed)
     else:
-        print "VALUES: %s - %s" % (value, module.params['value'])
+        print("VALUES: %s - %s" % (value, module.params['value']))
         if value != module.params['value']:
             changed = True
             if not module.check_mode:
