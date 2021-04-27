@@ -122,9 +122,8 @@
   shell: crm_verify -L -V
   run_once: true
 
-- name: enable cluster autostart
-  shell: pcs cluster enable
+#- name: enable cluster autostart
+#  shell: pcs cluster enable
 
 # reload corosync if neccessary (done automatically on the end of the tasklist)
 #- meta: flush_handlers
-
