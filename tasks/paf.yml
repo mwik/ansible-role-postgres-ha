@@ -15,41 +15,10 @@
 # and the role will fail
 # that's why it's embedded in the role
 
-- name: copy PAF rpm to hosts
-  copy: src="{{ paf_pkg }}" dest="/tmp/{{ paf_pkg }}"
-
 - name: install PAF DB failover agent
   yum:
-    name: "/tmp/{{ paf_pkg }}"
+    name: https://github.com/ClusterLabs/PAF/releases/download/v2.3.0/resource-agents-paf-2.3.0-1.noarch.rpm
     state: present
-
-- name: apply PAF v2.2.0 fix for newest pacemaker
-  copy:
-    src: 'pgsqlms-2.2.0-fix-pg10'
-    dest: '/usr/lib/ocf/resource.d/heartbeat/pgsqlms'
-  args:
-    owner: root
-    group: root
-    mode:  0555
-  when: postgres_ha_paf_version == '2.2.0' and
-        not postgres_ha_paf_geo_patch
-
-- name: apply geo-HA patches to DB failover agent
-  copy:
-    src: 'pgsqlms-{{ postgres_ha_paf_version }}-geo-patched'
-    dest: '/usr/lib/ocf/resource.d/heartbeat/pgsqlms'
-  args:
-    owner: root
-    group: root
-    mode:  0555
-  when: postgres_ha_paf_geo_patch
-
-- name: prepare DB recovery config
-  template: src=recovery.conf.pcmk.j2 dest="{{ postgres_ha_pg_data }}/../recovery.conf.{{postgres_ha_cluster_name}}.pcmk"
-  args:
-    owner: postgres
-    group: postgres
-    mode:  0644
 
 - name: stop database for clustering
   service: name="{{ postgres_ha_pg_systemd_svcname }}" state=stopped enabled=false
@@ -63,7 +32,7 @@
       bindir: "{{ postgres_ha_pg_bindir }}"
       pgdata: "{{ postgres_ha_pg_data }}"
       pgport: "{{ postgres_ha_pg_port }}"
-      recovery_template: "{{ postgres_ha_pg_data }}/../recovery.conf.{{postgres_ha_cluster_name}}.pcmk"
+#      recovery_template: "{{ postgres_ha_pg_data }}/../recovery.conf.{{postgres_ha_cluster_name}}.pcmk"
     operations:
       - action: start
         options:
